@@ -473,4 +473,4 @@ The built files will be in `dist/`.
 
 ## License
 
-Elastic License 2.0
+Apache 2.0
