@@ -8,10 +8,13 @@ Production-ready Node.js client for the Faramesh Execution Governor API.
 npm install @faramesh/sdk
 ```
 
-Or install from local path:
+Or from source:
 
 ```bash
-npm install ../path/to/sdk/node
+git clone https://github.com/faramesh/faramesh-node-sdk.git
+cd faramesh-node-sdk
+npm install && npm run build
+npm install .
 ```
 
 ## Quick Start
@@ -470,6 +473,10 @@ The built files will be in `dist/`.
 ## Repository
 
 **Source**: https://github.com/faramesh/faramesh-node-sdk
+
+Full documentation: [faramesh-docs](https://github.com/faramesh/faramesh-docs) · [faramesh.dev](https://faramesh.dev)
+
+See [SDK-Node.md](https://github.com/faramesh/faramesh-docs/blob/main/SDK-Node.md) for the full API reference.
 
 ## License
 
