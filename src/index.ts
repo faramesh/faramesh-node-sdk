@@ -14,6 +14,15 @@
  * ```
  */
 
+export { getActiveConfig, getActiveConfig as get_active_config } from "./client";
+
+export {
+  ExecutionGovernorClient,
+  type GovernorConfig,
+} from "./legacy_client";
+
+export { FarameshError as GovernorError } from "./types";
+
 export {
   configure,
   submitAction,
@@ -30,12 +39,14 @@ export {
   waitForCompletion,
   apply,
   tailEvents,
+  streamEvents,
   onEvents,
   allow,
   deny,
   __version__,
   // Gate/Replay helpers
   gateDecide,
+  gateDecideDict,
   replayDecision,
   verifyRequestHash,
   executeIfAllowed,
@@ -60,6 +71,8 @@ export {
   FarameshServerError,
   FarameshBatchError,
   FarameshDeniedError,
+  DenyError,
+  DeferredError,
   FarameshEvent,
   // Gate types
   DecisionOutcome,
@@ -80,6 +93,15 @@ export {
   governedTool,
   GovernedToolConfig,
 } from "./governed-tool";
+
+export { govern } from "./govern";
+export {
+  installLangChainInterceptor,
+  createLangChainMiddleware,
+  LangChainInstallOptions,
+  LangChainMiddlewareOptions,
+  FarameshLangChainMiddleware,
+} from "./langchain";
 
 export {
   ActionSnapshotStore,
@@ -102,6 +124,8 @@ export {
   policyToDict,
   createPolicy,
 } from "./policy";
+
+export * from "./python_aliases";
 
 // Default export for CommonJS compatibility
 import * as SDK from "./client";

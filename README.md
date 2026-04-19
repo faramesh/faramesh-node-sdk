@@ -1,6 +1,15 @@
 # Faramesh Node.js SDK
 
-Production-ready Node.js client for the Faramesh Execution Governor API.
+Node.js client for the Faramesh Execution Governor API.
+
+**Production use:** pin `@faramesh/sdk` to an **exact semver** in `package-lock.json`, run your own integration tests against the governed daemon and MCP surfaces you ship, and keep `faramesh audit verify` / corpus-style checks in CI for any autopatch path. Coverage is still somewhat narrower than the Python SDK, but the HTTP client, gate/replay helpers, streaming events, LangChain helpers, and the **legacy `ExecutionGovernorClient`** class (Python parity) are covered by tests.
+
+For AI governance and AI agent execution control architecture details, see:
+
+- [Faramesh Core README](../../README.md)
+- [Core Docs Index](../../docs/README.md)
+- [FPL Language README](https://github.com/faramesh/fpl-lang)
+- [FPL Language Reference](https://github.com/faramesh/fpl-lang/blob/main/docs/LANGUAGE_REFERENCE.md)
 
 ## Installation
 
@@ -8,13 +17,10 @@ Production-ready Node.js client for the Faramesh Execution Governor API.
 npm install @faramesh/sdk
 ```
 
-Or from source:
+Or install from local path:
 
 ```bash
-git clone https://github.com/faramesh/faramesh-node-sdk.git
-cd faramesh-node-sdk
-npm install && npm run build
-npm install .
+npm install ../path/to/sdk/node
 ```
 
 ## Quick Start
@@ -48,6 +54,24 @@ if (action.status === 'pending_approval') {
   console.log(`Action approved: ${approved.status}`);
 }
 ```
+
+### Legacy class API (Python `ExecutionGovernorClient`)
+
+Use module-level `configure` / `submitAction` in new code. For drop-in parity with older Python patterns:
+
+```typescript
+import { ExecutionGovernorClient } from '@faramesh/sdk';
+
+const client = new ExecutionGovernorClient({
+  baseUrl: 'http://localhost:8000',
+  token: 'your-token',
+  agentId: 'my-agent',
+});
+
+const action = await client.submitAction('http', 'get', { url: 'https://example.com' });
+```
+
+`GovernorConfig` and `GovernorError` are compatibility aliases matching the Python SDK names. `getActiveConfig()` (also exported as `get_active_config` for Python-style imports) returns the resolved global configuration snapshot.
 
 ## Using CommonJS
 
@@ -474,10 +498,6 @@ The built files will be in `dist/`.
 
 **Source**: https://github.com/faramesh/faramesh-node-sdk
 
-Full documentation: [faramesh-docs](https://github.com/faramesh/faramesh-docs) · [faramesh.dev](https://faramesh.dev)
-
-See [SDK-Node.md](https://github.com/faramesh/faramesh-docs/blob/main/SDK-Node.md) for the full API reference.
-
 ## License
 
-Apache 2.0
+MIT License

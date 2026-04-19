@@ -1,14 +1,13 @@
 {
   "name": "@faramesh/sdk",
-  "version": "0.3.0",
-  "description": "Faramesh Node.js SDK - Production-ready client for the Faramesh Execution Governor API",
+  "version": "0.3.2",
+  "description": "Faramesh Node.js SDK - Alpha client for the Faramesh Execution Governor API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist",
     "README.md"
   ],
-  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "prepare": "tsc",
@@ -17,15 +16,29 @@
   },
   "keywords": [
     "faramesh",
+    "ai",
+    "ai governance",
+    "ai guardrails",
+    "ai agents",
+    "agent governance",
+    "agent execution control",
+    "tool governance",
+    "policy",
+    "policy engine",
+    "mcp",
+    "tool-calling",
+    "compliance",
+    "audit",
     "governance",
     "agent",
     "sdk"
   ],
   "author": "Faramesh Contributors",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/faramesh/faramesh-node-sdk"
+    "url": "https://github.com/faramesh/Faramesh-Nexus.git",
+    "directory": "faramesh-core/sdk/node"
   },
   "dependencies": {
     "axios": "^1.6.0"

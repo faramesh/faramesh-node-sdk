@@ -76,6 +76,8 @@ export type RiskLevel = "low" | "medium" | "high";
 
 export interface ClientConfig {
   baseUrl?: string;
+  /** Default agent id for the legacy class-based client and optional global defaults (Python: `ClientConfig.agent_id`). */
+  agentId?: string;
   token?: string;
   timeoutMs?: number;
   maxRetries?: number;
@@ -188,6 +190,34 @@ export class FarameshDeniedError extends FarameshError {
     super(message);
     this.name = "FarameshDeniedError";
     Object.setPrototypeOf(this, FarameshDeniedError.prototype);
+  }
+}
+
+/** Raised by {@link govern} when the gate denies execution. */
+export class DenyError extends FarameshDeniedError {
+  constructor(
+    message: string,
+    public reasonCode: string = "",
+    public reasonDetail?: string | null,
+    public decision?: GateDecision
+  ) {
+    super(message);
+    this.name = "DenyError";
+    Object.setPrototypeOf(this, DenyError.prototype);
+  }
+}
+
+/** Raised by {@link govern} when the gate defers (human-in-the-loop). */
+export class DeferredError extends FarameshError {
+  constructor(
+    message: string,
+    public reasonCode: string = "",
+    public reasonDetail?: string | null,
+    public decision?: GateDecision
+  ) {
+    super(message);
+    this.name = "DeferredError";
+    Object.setPrototypeOf(this, DeferredError.prototype);
   }
 }
 

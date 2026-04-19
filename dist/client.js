@@ -47,8 +47,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deny = exports.allow = exports.__version__ = void 0;
+exports.deny = exports.allow = exports.streamEventsDeps = exports.__version__ = void 0;
 exports.configure = configure;
+exports.getActiveConfig = getActiveConfig;
 exports.submitAction = submitAction;
 exports.getAction = getAction;
 exports.listActions = listActions;
@@ -64,7 +65,9 @@ exports.submitActionsBulk = submitActionsBulk;
 exports.blockUntilApproved = blockUntilApproved;
 exports.submitAndWait = submitAndWait;
 exports.onEvents = onEvents;
+exports.streamEvents = streamEvents;
 exports.gateDecide = gateDecide;
+exports.gateDecideDict = gateDecideDict;
 exports.replayDecision = replayDecision;
 exports.verifyRequestHash = verifyRequestHash;
 exports.executeIfAllowed = executeIfAllowed;
@@ -80,22 +83,36 @@ let globalConfig = null;
  */
 function configure(options = {}) {
     const existingConfig = globalConfig;
+    const snakeAgent = options.agent_id;
     globalConfig = {
         baseUrl: options.baseUrl || process.env.FARAMESH_BASE_URL || process.env.FARA_API_BASE || "http://127.0.0.1:8000",
         token: options.token || process.env.FARAMESH_TOKEN || process.env.FARA_AUTH_TOKEN,
         timeoutMs: options.timeoutMs || 30000,
         maxRetries: options.maxRetries || parseInt(process.env.FARAMESH_RETRIES || "3", 10),
         retryBackoffFactor: options.retryBackoffFactor || parseFloat(process.env.FARAMESH_RETRY_BACKOFF || "0.5"),
+        agentId: options.agentId ?? snakeAgent ?? existingConfig?.agentId ?? process.env.FARAMESH_AGENT_ID,
         onRequestStart: options.onRequestStart || existingConfig?.onRequestStart,
         onRequestEnd: options.onRequestEnd || existingConfig?.onRequestEnd,
         onError: options.onError || existingConfig?.onError,
     };
+    try {
+        const u = new URL(globalConfig.baseUrl);
+        if (u.protocol === "http:" && u.hostname !== "127.0.0.1" && u.hostname !== "localhost" && u.hostname !== "::1") {
+            console.warn(`[faramesh] WARNING: base URL uses plain HTTP with non-localhost host (${u.hostname}). ` +
+                "Use https:// in production to protect governance decisions and credentials in transit.");
+        }
+    }
+    catch { /* ignore parse errors — will fail later at request time */ }
 }
 function getConfig() {
     if (!globalConfig) {
         configure();
     }
     return globalConfig;
+}
+/** Snapshot of the active global SDK configuration (including defaults resolved from env). */
+function getActiveConfig() {
+    return { ...getConfig() };
 }
 function createAxiosInstance(config) {
     const instance = axios_1.default.create({
@@ -745,6 +762,41 @@ function onEvents(handler, options) {
         eventSource.close();
     };
 }
+/** Pluggable hook for tests (defaults to {@link onEvents}). */
+exports.streamEventsDeps = {
+    onEvents: (handler, options) => onEvents(handler, options),
+};
+/**
+ * Stream events (SSE) with Python `stream_events`-compatible options.
+ * Builds on {@link onEvents}: supports `stopAfter` and `timeoutMs` to auto-close.
+ */
+function streamEvents(handler, options) {
+    let count = 0;
+    const closeRef = { fn: () => { } };
+    closeRef.fn = exports.streamEventsDeps.onEvents((ev) => {
+        handler(ev);
+        if (options?.stopAfter != null && options.stopAfter > 0) {
+            count++;
+            if (count >= options.stopAfter) {
+                closeRef.fn();
+            }
+        }
+    }, {
+        eventTypes: options?.eventTypes,
+        actionId: options?.actionId,
+        signal: options?.signal,
+    });
+    let timer;
+    if (options?.timeoutMs != null && options.timeoutMs > 0) {
+        timer = setTimeout(() => closeRef.fn(), options.timeoutMs);
+    }
+    return () => {
+        if (timer !== undefined) {
+            clearTimeout(timer);
+        }
+        closeRef.fn();
+    };
+}
 // Convenience aliases
 exports.allow = approveAction;
 exports.deny = denyAction;
@@ -775,6 +827,20 @@ const canonicalization_1 = require("./canonicalization");
  * ```
  */
 async function gateDecide(agentId, tool, operation, params = {}, context = {}) {
+    const payload = {
+        agent_id: agentId,
+        tool,
+        operation,
+        params,
+        context,
+    };
+    return makeRequest("POST", "/v1/gate/decide", payload);
+}
+/**
+ * Same as {@link gateDecide} but returns the raw JSON object from the API
+ * (Python `gate_decide_dict`).
+ */
+async function gateDecideDict(agentId, tool, operation, params = {}, context = {}) {
     const payload = {
         agent_id: agentId,
         tool,

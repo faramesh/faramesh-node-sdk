@@ -15,6 +15,8 @@ export declare const __version__ = "0.3.0";
  * Configure the global SDK client
  */
 export declare function configure(options?: ClientConfig): void;
+/** Snapshot of the active global SDK configuration (including defaults resolved from env). */
+export declare function getActiveConfig(): ClientConfig;
 /**
  * Submit an action for governance evaluation
  */
@@ -105,6 +107,25 @@ export declare function onEvents(handler: (event: FarameshEvent) => void, option
     signal?: AbortSignal;
     actionId?: string;
 }): () => void;
+/** Pluggable hook for tests (defaults to {@link onEvents}). */
+export declare const streamEventsDeps: {
+    onEvents: (handler: (event: FarameshEvent) => void, options?: {
+        eventTypes?: string[];
+        signal?: AbortSignal;
+        actionId?: string;
+    }) => () => void;
+};
+/**
+ * Stream events (SSE) with Python `stream_events`-compatible options.
+ * Builds on {@link onEvents}: supports `stopAfter` and `timeoutMs` to auto-close.
+ */
+export declare function streamEvents(handler: (event: FarameshEvent) => void, options?: {
+    eventTypes?: string[];
+    stopAfter?: number;
+    timeoutMs?: number;
+    actionId?: string;
+    signal?: AbortSignal;
+}): () => void;
 export declare const allow: typeof approveAction;
 export declare const deny: typeof denyAction;
 import { GateDecision, ReplayResult } from "./types";
@@ -134,6 +155,11 @@ import { GateDecision, ReplayResult } from "./types";
  * ```
  */
 export declare function gateDecide(agentId: string, tool: string, operation: string, params?: Record<string, any>, context?: Record<string, any>): Promise<GateDecision>;
+/**
+ * Same as {@link gateDecide} but returns the raw JSON object from the API
+ * (Python `gate_decide_dict`).
+ */
+export declare function gateDecideDict(agentId: string, tool: string, operation: string, params?: Record<string, any>, context?: Record<string, any>): Promise<Record<string, any>>;
 /**
  * Replay a decision to verify determinism.
  *

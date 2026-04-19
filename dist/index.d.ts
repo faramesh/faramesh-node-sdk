@@ -13,12 +13,18 @@
  * console.log(`Action ${action.id} status: ${action.status}`);
  * ```
  */
-export { configure, submitAction, submitActions, submitActionsBulk, submitAndWait, blockUntilApproved, getAction, listActions, approveAction, denyAction, startAction, replayAction, waitForCompletion, apply, tailEvents, onEvents, allow, deny, __version__, gateDecide, replayDecision, verifyRequestHash, executeIfAllowed, } from "./client";
-export { Action, ActionStatus, Decision, RiskLevel, ClientConfig, SubmitActionRequest, ListActionsOptions, ApprovalRequest, FarameshError, FarameshAuthError, FarameshNotFoundError, FarameshPolicyError, FarameshTimeoutError, FarameshConnectionError, FarameshValidationError, FarameshServerError, FarameshBatchError, FarameshDeniedError, FarameshEvent, DecisionOutcome, GateDecision, ReplayResult, } from "./types";
+export { getActiveConfig, getActiveConfig as get_active_config } from "./client";
+export { ExecutionGovernorClient, type GovernorConfig, } from "./legacy_client";
+export { FarameshError as GovernorError } from "./types";
+export { configure, submitAction, submitActions, submitActionsBulk, submitAndWait, blockUntilApproved, getAction, listActions, approveAction, denyAction, startAction, replayAction, waitForCompletion, apply, tailEvents, streamEvents, onEvents, allow, deny, __version__, gateDecide, gateDecideDict, replayDecision, verifyRequestHash, executeIfAllowed, } from "./client";
+export { Action, ActionStatus, Decision, RiskLevel, ClientConfig, SubmitActionRequest, ListActionsOptions, ApprovalRequest, FarameshError, FarameshAuthError, FarameshNotFoundError, FarameshPolicyError, FarameshTimeoutError, FarameshConnectionError, FarameshValidationError, FarameshServerError, FarameshBatchError, FarameshDeniedError, DenyError, DeferredError, FarameshEvent, DecisionOutcome, GateDecision, ReplayResult, } from "./types";
 export { canonicalize, canonicalizeActionPayload, computeRequestHash, computeHash, CanonicalizeError, } from "./canonicalization";
 export { governedTool, GovernedToolConfig, } from "./governed-tool";
+export { govern } from "./govern";
+export { installLangChainInterceptor, createLangChainMiddleware, LangChainInstallOptions, LangChainMiddlewareOptions, FarameshLangChainMiddleware, } from "./langchain";
 export { ActionSnapshotStore, getDefaultStore, } from "./snapshot";
 export { validatePolicyFile, testPolicyAgainstAction, } from "./policy-helpers";
 export { Policy, PolicyRule, MatchCondition, RiskRule, RiskLevel as PolicyRiskLevel, validatePolicy, policyToYaml, policyToDict, createPolicy, } from "./policy";
+export * from "./python_aliases";
 import * as SDK from "./client";
 export default SDK;

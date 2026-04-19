@@ -60,6 +60,8 @@ export type Decision = "allow" | "deny" | "require_approval";
 export type RiskLevel = "low" | "medium" | "high";
 export interface ClientConfig {
     baseUrl?: string;
+    /** Default agent id for the legacy class-based client and optional global defaults (Python: `ClientConfig.agent_id`). */
+    agentId?: string;
     token?: string;
     timeoutMs?: number;
     maxRetries?: number;
@@ -127,6 +129,20 @@ export declare class FarameshBatchError extends FarameshError {
 }
 export declare class FarameshDeniedError extends FarameshError {
     constructor(message: string);
+}
+/** Raised by {@link govern} when the gate denies execution. */
+export declare class DenyError extends FarameshDeniedError {
+    reasonCode: string;
+    reasonDetail?: string | null | undefined;
+    decision?: GateDecision | undefined;
+    constructor(message: string, reasonCode?: string, reasonDetail?: string | null | undefined, decision?: GateDecision | undefined);
+}
+/** Raised by {@link govern} when the gate defers (human-in-the-loop). */
+export declare class DeferredError extends FarameshError {
+    reasonCode: string;
+    reasonDetail?: string | null | undefined;
+    decision?: GateDecision | undefined;
+    constructor(message: string, reasonCode?: string, reasonDetail?: string | null | undefined, decision?: GateDecision | undefined);
 }
 export interface FarameshEvent {
     event_type?: string;

@@ -3,7 +3,7 @@
  * TypeScript type definitions for Faramesh SDK
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FarameshDeniedError = exports.FarameshBatchError = exports.FarameshServerError = exports.FarameshValidationError = exports.FarameshConnectionError = exports.FarameshTimeoutError = exports.FarameshPolicyError = exports.FarameshNotFoundError = exports.FarameshAuthError = exports.FarameshError = void 0;
+exports.DeferredError = exports.DenyError = exports.FarameshDeniedError = exports.FarameshBatchError = exports.FarameshServerError = exports.FarameshValidationError = exports.FarameshConnectionError = exports.FarameshTimeoutError = exports.FarameshPolicyError = exports.FarameshNotFoundError = exports.FarameshAuthError = exports.FarameshError = void 0;
 class FarameshError extends Error {
     constructor(message, statusCode) {
         super(message);
@@ -87,3 +87,27 @@ class FarameshDeniedError extends FarameshError {
     }
 }
 exports.FarameshDeniedError = FarameshDeniedError;
+/** Raised by {@link govern} when the gate denies execution. */
+class DenyError extends FarameshDeniedError {
+    constructor(message, reasonCode = "", reasonDetail, decision) {
+        super(message);
+        this.reasonCode = reasonCode;
+        this.reasonDetail = reasonDetail;
+        this.decision = decision;
+        this.name = "DenyError";
+        Object.setPrototypeOf(this, DenyError.prototype);
+    }
+}
+exports.DenyError = DenyError;
+/** Raised by {@link govern} when the gate defers (human-in-the-loop). */
+class DeferredError extends FarameshError {
+    constructor(message, reasonCode = "", reasonDetail, decision) {
+        super(message);
+        this.reasonCode = reasonCode;
+        this.reasonDetail = reasonDetail;
+        this.decision = decision;
+        this.name = "DeferredError";
+        Object.setPrototypeOf(this, DeferredError.prototype);
+    }
+}
+exports.DeferredError = DeferredError;

@@ -30,6 +30,9 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
 var __importStar = (this && this.__importStar) || (function () {
     var ownKeys = function(o) {
         ownKeys = Object.getOwnPropertyNames || function (o) {
@@ -48,43 +51,55 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createPolicy = exports.policyToDict = exports.policyToYaml = exports.validatePolicy = exports.testPolicyAgainstAction = exports.validatePolicyFile = exports.getDefaultStore = exports.ActionSnapshotStore = exports.governedTool = exports.CanonicalizeError = exports.computeHash = exports.computeRequestHash = exports.canonicalizeActionPayload = exports.canonicalize = exports.FarameshDeniedError = exports.FarameshBatchError = exports.FarameshServerError = exports.FarameshValidationError = exports.FarameshConnectionError = exports.FarameshTimeoutError = exports.FarameshPolicyError = exports.FarameshNotFoundError = exports.FarameshAuthError = exports.FarameshError = exports.executeIfAllowed = exports.verifyRequestHash = exports.replayDecision = exports.gateDecide = exports.__version__ = exports.deny = exports.allow = exports.onEvents = exports.tailEvents = exports.apply = exports.waitForCompletion = exports.replayAction = exports.startAction = exports.denyAction = exports.approveAction = exports.listActions = exports.getAction = exports.blockUntilApproved = exports.submitAndWait = exports.submitActionsBulk = exports.submitActions = exports.submitAction = exports.configure = void 0;
+exports.createLangChainMiddleware = exports.installLangChainInterceptor = exports.govern = exports.governedTool = exports.CanonicalizeError = exports.computeHash = exports.computeRequestHash = exports.canonicalizeActionPayload = exports.canonicalize = exports.DeferredError = exports.DenyError = exports.FarameshDeniedError = exports.FarameshBatchError = exports.FarameshServerError = exports.FarameshValidationError = exports.FarameshConnectionError = exports.FarameshTimeoutError = exports.FarameshPolicyError = exports.FarameshNotFoundError = exports.FarameshAuthError = exports.FarameshError = exports.executeIfAllowed = exports.verifyRequestHash = exports.replayDecision = exports.gateDecideDict = exports.gateDecide = exports.__version__ = exports.deny = exports.allow = exports.onEvents = exports.streamEvents = exports.tailEvents = exports.apply = exports.waitForCompletion = exports.replayAction = exports.startAction = exports.denyAction = exports.approveAction = exports.listActions = exports.getAction = exports.blockUntilApproved = exports.submitAndWait = exports.submitActionsBulk = exports.submitActions = exports.submitAction = exports.configure = exports.GovernorError = exports.ExecutionGovernorClient = exports.get_active_config = exports.getActiveConfig = void 0;
+exports.createPolicy = exports.policyToDict = exports.policyToYaml = exports.validatePolicy = exports.testPolicyAgainstAction = exports.validatePolicyFile = exports.getDefaultStore = exports.ActionSnapshotStore = void 0;
 var client_1 = require("./client");
-Object.defineProperty(exports, "configure", { enumerable: true, get: function () { return client_1.configure; } });
-Object.defineProperty(exports, "submitAction", { enumerable: true, get: function () { return client_1.submitAction; } });
-Object.defineProperty(exports, "submitActions", { enumerable: true, get: function () { return client_1.submitActions; } });
-Object.defineProperty(exports, "submitActionsBulk", { enumerable: true, get: function () { return client_1.submitActionsBulk; } });
-Object.defineProperty(exports, "submitAndWait", { enumerable: true, get: function () { return client_1.submitAndWait; } });
-Object.defineProperty(exports, "blockUntilApproved", { enumerable: true, get: function () { return client_1.blockUntilApproved; } });
-Object.defineProperty(exports, "getAction", { enumerable: true, get: function () { return client_1.getAction; } });
-Object.defineProperty(exports, "listActions", { enumerable: true, get: function () { return client_1.listActions; } });
-Object.defineProperty(exports, "approveAction", { enumerable: true, get: function () { return client_1.approveAction; } });
-Object.defineProperty(exports, "denyAction", { enumerable: true, get: function () { return client_1.denyAction; } });
-Object.defineProperty(exports, "startAction", { enumerable: true, get: function () { return client_1.startAction; } });
-Object.defineProperty(exports, "replayAction", { enumerable: true, get: function () { return client_1.replayAction; } });
-Object.defineProperty(exports, "waitForCompletion", { enumerable: true, get: function () { return client_1.waitForCompletion; } });
-Object.defineProperty(exports, "apply", { enumerable: true, get: function () { return client_1.apply; } });
-Object.defineProperty(exports, "tailEvents", { enumerable: true, get: function () { return client_1.tailEvents; } });
-Object.defineProperty(exports, "onEvents", { enumerable: true, get: function () { return client_1.onEvents; } });
-Object.defineProperty(exports, "allow", { enumerable: true, get: function () { return client_1.allow; } });
-Object.defineProperty(exports, "deny", { enumerable: true, get: function () { return client_1.deny; } });
-Object.defineProperty(exports, "__version__", { enumerable: true, get: function () { return client_1.__version__; } });
-// Gate/Replay helpers
-Object.defineProperty(exports, "gateDecide", { enumerable: true, get: function () { return client_1.gateDecide; } });
-Object.defineProperty(exports, "replayDecision", { enumerable: true, get: function () { return client_1.replayDecision; } });
-Object.defineProperty(exports, "verifyRequestHash", { enumerable: true, get: function () { return client_1.verifyRequestHash; } });
-Object.defineProperty(exports, "executeIfAllowed", { enumerable: true, get: function () { return client_1.executeIfAllowed; } });
+Object.defineProperty(exports, "getActiveConfig", { enumerable: true, get: function () { return client_1.getActiveConfig; } });
+Object.defineProperty(exports, "get_active_config", { enumerable: true, get: function () { return client_1.getActiveConfig; } });
+var legacy_client_1 = require("./legacy_client");
+Object.defineProperty(exports, "ExecutionGovernorClient", { enumerable: true, get: function () { return legacy_client_1.ExecutionGovernorClient; } });
 var types_1 = require("./types");
-Object.defineProperty(exports, "FarameshError", { enumerable: true, get: function () { return types_1.FarameshError; } });
-Object.defineProperty(exports, "FarameshAuthError", { enumerable: true, get: function () { return types_1.FarameshAuthError; } });
-Object.defineProperty(exports, "FarameshNotFoundError", { enumerable: true, get: function () { return types_1.FarameshNotFoundError; } });
-Object.defineProperty(exports, "FarameshPolicyError", { enumerable: true, get: function () { return types_1.FarameshPolicyError; } });
-Object.defineProperty(exports, "FarameshTimeoutError", { enumerable: true, get: function () { return types_1.FarameshTimeoutError; } });
-Object.defineProperty(exports, "FarameshConnectionError", { enumerable: true, get: function () { return types_1.FarameshConnectionError; } });
-Object.defineProperty(exports, "FarameshValidationError", { enumerable: true, get: function () { return types_1.FarameshValidationError; } });
-Object.defineProperty(exports, "FarameshServerError", { enumerable: true, get: function () { return types_1.FarameshServerError; } });
-Object.defineProperty(exports, "FarameshBatchError", { enumerable: true, get: function () { return types_1.FarameshBatchError; } });
-Object.defineProperty(exports, "FarameshDeniedError", { enumerable: true, get: function () { return types_1.FarameshDeniedError; } });
+Object.defineProperty(exports, "GovernorError", { enumerable: true, get: function () { return types_1.FarameshError; } });
+var client_2 = require("./client");
+Object.defineProperty(exports, "configure", { enumerable: true, get: function () { return client_2.configure; } });
+Object.defineProperty(exports, "submitAction", { enumerable: true, get: function () { return client_2.submitAction; } });
+Object.defineProperty(exports, "submitActions", { enumerable: true, get: function () { return client_2.submitActions; } });
+Object.defineProperty(exports, "submitActionsBulk", { enumerable: true, get: function () { return client_2.submitActionsBulk; } });
+Object.defineProperty(exports, "submitAndWait", { enumerable: true, get: function () { return client_2.submitAndWait; } });
+Object.defineProperty(exports, "blockUntilApproved", { enumerable: true, get: function () { return client_2.blockUntilApproved; } });
+Object.defineProperty(exports, "getAction", { enumerable: true, get: function () { return client_2.getAction; } });
+Object.defineProperty(exports, "listActions", { enumerable: true, get: function () { return client_2.listActions; } });
+Object.defineProperty(exports, "approveAction", { enumerable: true, get: function () { return client_2.approveAction; } });
+Object.defineProperty(exports, "denyAction", { enumerable: true, get: function () { return client_2.denyAction; } });
+Object.defineProperty(exports, "startAction", { enumerable: true, get: function () { return client_2.startAction; } });
+Object.defineProperty(exports, "replayAction", { enumerable: true, get: function () { return client_2.replayAction; } });
+Object.defineProperty(exports, "waitForCompletion", { enumerable: true, get: function () { return client_2.waitForCompletion; } });
+Object.defineProperty(exports, "apply", { enumerable: true, get: function () { return client_2.apply; } });
+Object.defineProperty(exports, "tailEvents", { enumerable: true, get: function () { return client_2.tailEvents; } });
+Object.defineProperty(exports, "streamEvents", { enumerable: true, get: function () { return client_2.streamEvents; } });
+Object.defineProperty(exports, "onEvents", { enumerable: true, get: function () { return client_2.onEvents; } });
+Object.defineProperty(exports, "allow", { enumerable: true, get: function () { return client_2.allow; } });
+Object.defineProperty(exports, "deny", { enumerable: true, get: function () { return client_2.deny; } });
+Object.defineProperty(exports, "__version__", { enumerable: true, get: function () { return client_2.__version__; } });
+// Gate/Replay helpers
+Object.defineProperty(exports, "gateDecide", { enumerable: true, get: function () { return client_2.gateDecide; } });
+Object.defineProperty(exports, "gateDecideDict", { enumerable: true, get: function () { return client_2.gateDecideDict; } });
+Object.defineProperty(exports, "replayDecision", { enumerable: true, get: function () { return client_2.replayDecision; } });
+Object.defineProperty(exports, "verifyRequestHash", { enumerable: true, get: function () { return client_2.verifyRequestHash; } });
+Object.defineProperty(exports, "executeIfAllowed", { enumerable: true, get: function () { return client_2.executeIfAllowed; } });
+var types_2 = require("./types");
+Object.defineProperty(exports, "FarameshError", { enumerable: true, get: function () { return types_2.FarameshError; } });
+Object.defineProperty(exports, "FarameshAuthError", { enumerable: true, get: function () { return types_2.FarameshAuthError; } });
+Object.defineProperty(exports, "FarameshNotFoundError", { enumerable: true, get: function () { return types_2.FarameshNotFoundError; } });
+Object.defineProperty(exports, "FarameshPolicyError", { enumerable: true, get: function () { return types_2.FarameshPolicyError; } });
+Object.defineProperty(exports, "FarameshTimeoutError", { enumerable: true, get: function () { return types_2.FarameshTimeoutError; } });
+Object.defineProperty(exports, "FarameshConnectionError", { enumerable: true, get: function () { return types_2.FarameshConnectionError; } });
+Object.defineProperty(exports, "FarameshValidationError", { enumerable: true, get: function () { return types_2.FarameshValidationError; } });
+Object.defineProperty(exports, "FarameshServerError", { enumerable: true, get: function () { return types_2.FarameshServerError; } });
+Object.defineProperty(exports, "FarameshBatchError", { enumerable: true, get: function () { return types_2.FarameshBatchError; } });
+Object.defineProperty(exports, "FarameshDeniedError", { enumerable: true, get: function () { return types_2.FarameshDeniedError; } });
+Object.defineProperty(exports, "DenyError", { enumerable: true, get: function () { return types_2.DenyError; } });
+Object.defineProperty(exports, "DeferredError", { enumerable: true, get: function () { return types_2.DeferredError; } });
 // Canonicalization helpers
 var canonicalization_1 = require("./canonicalization");
 Object.defineProperty(exports, "canonicalize", { enumerable: true, get: function () { return canonicalization_1.canonicalize; } });
@@ -94,6 +109,11 @@ Object.defineProperty(exports, "computeHash", { enumerable: true, get: function 
 Object.defineProperty(exports, "CanonicalizeError", { enumerable: true, get: function () { return canonicalization_1.CanonicalizeError; } });
 var governed_tool_1 = require("./governed-tool");
 Object.defineProperty(exports, "governedTool", { enumerable: true, get: function () { return governed_tool_1.governedTool; } });
+var govern_1 = require("./govern");
+Object.defineProperty(exports, "govern", { enumerable: true, get: function () { return govern_1.govern; } });
+var langchain_1 = require("./langchain");
+Object.defineProperty(exports, "installLangChainInterceptor", { enumerable: true, get: function () { return langchain_1.installLangChainInterceptor; } });
+Object.defineProperty(exports, "createLangChainMiddleware", { enumerable: true, get: function () { return langchain_1.createLangChainMiddleware; } });
 var snapshot_1 = require("./snapshot");
 Object.defineProperty(exports, "ActionSnapshotStore", { enumerable: true, get: function () { return snapshot_1.ActionSnapshotStore; } });
 Object.defineProperty(exports, "getDefaultStore", { enumerable: true, get: function () { return snapshot_1.getDefaultStore; } });
@@ -105,6 +125,7 @@ Object.defineProperty(exports, "validatePolicy", { enumerable: true, get: functi
 Object.defineProperty(exports, "policyToYaml", { enumerable: true, get: function () { return policy_1.policyToYaml; } });
 Object.defineProperty(exports, "policyToDict", { enumerable: true, get: function () { return policy_1.policyToDict; } });
 Object.defineProperty(exports, "createPolicy", { enumerable: true, get: function () { return policy_1.createPolicy; } });
+__exportStar(require("./python_aliases"), exports);
 // Default export for CommonJS compatibility
 const SDK = __importStar(require("./client"));
 exports.default = SDK;
