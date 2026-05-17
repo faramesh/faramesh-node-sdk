@@ -5,14 +5,15 @@
  */
 
 import { gateDecide } from "./client";
+import { ToolDeniedException } from "./exceptions";
+import { detectTransport, governViaTransport } from "./transport";
 import { DeferredError, DenyError, GateDecision } from "./types";
-import * as net from "net";
-import * as path from "path";
 
 export interface GovernResult {
   effect: "PERMIT" | "DENY" | "DEFER";
   reasonCode?: string;
   deferToken?: string;
+  structuredDenial?: import("./exceptions").StructuredDenial;
 }
 
 export interface GovernRequest {
@@ -64,91 +65,36 @@ export async function gateGovern(
  * Tries Unix socket first, falls back to HTTP.
  */
 export async function govern(req: GovernRequest): Promise<GovernResult> {
-  const socketPath = process.env.FARAMESH_SOCKET || "/tmp/faramesh.sock";
   const agentId = req.agentId || process.env.FARAMESH_AGENT_ID || "auto-patched";
-
-  const parts = req.toolId.split("/");
-  const tool = parts.length > 1 ? parts.slice(0, -1).join("/") : req.toolId;
-  const operation = parts.length > 1 ? parts[parts.length - 1] : "invoke";
-
   try {
-    const stat = await new Promise<boolean>((resolve) => {
-      const fs = require("fs");
-      fs.access(socketPath, fs.constants.F_OK, (err: any) => resolve(!err));
-    });
-
-    if (stat) {
-      return await governViaSocket(socketPath, agentId, tool, operation, req.args);
+    const transport = detectTransport();
+    const result = await governViaTransport(transport, req.toolId, req.args, agentId);
+    const effect = (result.effect || "PERMIT").toUpperCase() as GovernResult["effect"];
+    return {
+      effect,
+      reasonCode: result.reason_code,
+      deferToken: result.defer_token,
+      structuredDenial: result.structured_denial,
+    };
+  } catch (err: unknown) {
+    if (
+      err instanceof Error &&
+      err.message.includes("no governance transport")
+    ) {
+      // HTTP gate fallback for legacy deployments.
+      const parts = req.toolId.split("/");
+      const tool = parts.length > 1 ? parts.slice(0, -1).join("/") : req.toolId;
+      const operation = parts.length > 1 ? parts[parts.length - 1] : "invoke";
+      const d = await gateDecide(agentId, tool, operation, req.args);
+      const o = (d.outcome || "").toUpperCase();
+      if (o === "EXECUTE" || o === "PERMIT") return { effect: "PERMIT" };
+      if (o === "HALT" || o === "DENY")
+        return { effect: "DENY", reasonCode: d.reason_code };
+      if (o === "ABSTAIN" || o === "DEFER" || o === "PENDING")
+        return { effect: "DEFER", deferToken: d.provenance_id || "" };
     }
-  } catch {
-    // Socket not available, fall through to HTTP.
-  }
-
-  try {
-    const d = await gateDecide(agentId, tool, operation, req.args);
-    const o = (d.outcome || "").toUpperCase();
-    if (o === "EXECUTE" || o === "PERMIT") return { effect: "PERMIT" };
-    if (o === "HALT" || o === "DENY")
-      return { effect: "DENY", reasonCode: d.reason_code };
-    if (o === "ABSTAIN" || o === "DEFER" || o === "PENDING")
-      return { effect: "DEFER", deferToken: d.provenance_id || "" };
-    return { effect: "PERMIT" };
-  } catch (err: any) {
-    if (err instanceof DenyError) return { effect: "DENY", reasonCode: err.reasonCode };
-    if (err instanceof DeferredError) return { effect: "DEFER" };
     throw err;
   }
 }
 
-function governViaSocket(
-  socketPath: string,
-  agentId: string,
-  tool: string,
-  operation: string,
-  args: Record<string, any>
-): Promise<GovernResult> {
-  return new Promise((resolve, reject) => {
-    const payload = JSON.stringify({
-      jsonrpc: "2.0",
-      id: 1,
-      method: "govern",
-      params: { agent_id: agentId, tool, operation, args },
-    }) + "\n";
-
-    const client = net.createConnection({ path: socketPath }, () => {
-      client.write(payload);
-    });
-
-    let data = "";
-    client.on("data", (chunk) => {
-      data += chunk.toString();
-      if (data.includes("\n")) {
-        client.end();
-      }
-    });
-
-    client.on("end", () => {
-      try {
-        const resp = JSON.parse(data.trim());
-        const result = resp.result || {};
-        const effect = (result.effect || "PERMIT").toUpperCase() as GovernResult["effect"];
-        resolve({
-          effect,
-          reasonCode: result.reason_code || "",
-          deferToken: result.defer_token || "",
-        });
-      } catch (err) {
-        reject(new Error(`Failed to parse governance response: ${err}`));
-      }
-    });
-
-    client.on("error", (err) => {
-      reject(new Error(`Faramesh socket error: ${err.message}`));
-    });
-
-    client.setTimeout(5000, () => {
-      client.destroy();
-      reject(new Error("Faramesh socket timeout"));
-    });
-  });
-}
+export { ToolDeniedException };

@@ -94,7 +94,10 @@ export {
   GovernedToolConfig,
 } from "./governed-tool";
 
-export { govern } from "./govern";
+export { govern, ToolDeniedException } from "./govern";
+export { GovernedToolSet } from "./governed-toolset";
+export type { StructuredDenial, DenialResolution } from "./exceptions";
+export { detectTransport, governViaTransport, defaultSocketPath } from "./transport";
 export {
   installLangChainInterceptor,
   createLangChainMiddleware,

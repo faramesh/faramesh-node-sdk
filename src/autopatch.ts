@@ -14,7 +14,7 @@
  *   installAutoPatch(server);
  */
 
-import { govern, GovernResult } from './govern';
+import { govern, GovernResult, ToolDeniedException } from './govern';
 import { installLangChainInterceptor } from './langchain';
 
 let installed = false;
@@ -42,15 +42,13 @@ export function installAutoPatch(server: any): boolean {
             args: toolArgs,
           });
 
-          if (result.effect === 'DENY') {
-            throw new Error(
-              `Faramesh DENY: ${result.reasonCode || 'POLICY_DENY'} (tool=${toolName})`
-            );
-          }
-          if (result.effect === 'DEFER') {
-            throw new Error(
-              `Faramesh DEFER: approval required (token=${result.deferToken}, tool=${toolName})`
-            );
+          if (result.effect === 'DENY' || result.effect === 'DEFER') {
+            throw ToolDeniedException.fromGovernResult({
+              effect: result.effect,
+              reason_code: result.reasonCode,
+              defer_token: result.deferToken,
+              structured_denial: result.structuredDenial,
+            });
           }
         } catch (err: any) {
           if (err.message?.startsWith('Faramesh')) throw err;
