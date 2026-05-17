@@ -70,7 +70,7 @@ describe("installAutoPatch", () => {
         },
         {}
       )
-    ).rejects.toThrow("Faramesh DENY");
+    ).rejects.toThrow(/denied|DENY|ToolDeniedException/i);
     expect(downstream).not.toHaveBeenCalled();
   });
 });

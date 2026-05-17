@@ -14,7 +14,8 @@
  *   installAutoPatch(server);
  */
 
-import { govern, GovernResult, ToolDeniedException } from './govern';
+import { govern, GovernResult } from './govern';
+import { ToolDeniedException } from './exceptions';
 import { installLangChainInterceptor } from './langchain';
 
 let installed = false;
@@ -51,6 +52,7 @@ export function installAutoPatch(server: any): boolean {
             });
           }
         } catch (err: any) {
+          if (err instanceof ToolDeniedException) throw err;
           if (err.message?.startsWith('Faramesh')) throw err;
           // Governance error → fail-closed
           console.error(`[faramesh] govern error (fail-closed): ${err.message}`);
