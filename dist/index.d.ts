@@ -20,7 +20,10 @@ export { configure, submitAction, submitActions, submitActionsBulk, submitAndWai
 export { Action, ActionStatus, Decision, RiskLevel, ClientConfig, SubmitActionRequest, ListActionsOptions, ApprovalRequest, FarameshError, FarameshAuthError, FarameshNotFoundError, FarameshPolicyError, FarameshTimeoutError, FarameshConnectionError, FarameshValidationError, FarameshServerError, FarameshBatchError, FarameshDeniedError, DenyError, DeferredError, FarameshEvent, DecisionOutcome, GateDecision, ReplayResult, } from "./types";
 export { canonicalize, canonicalizeActionPayload, computeRequestHash, computeHash, CanonicalizeError, } from "./canonicalization";
 export { governedTool, GovernedToolConfig, } from "./governed-tool";
-export { govern } from "./govern";
+export { govern, ToolDeniedException } from "./govern";
+export { GovernedToolSet } from "./governed-toolset";
+export type { StructuredDenial, DenialResolution } from "./exceptions";
+export { detectTransport, governViaTransport, defaultSocketPath } from "./transport";
 export { installLangChainInterceptor, createLangChainMiddleware, LangChainInstallOptions, LangChainMiddlewareOptions, FarameshLangChainMiddleware, } from "./langchain";
 export { ActionSnapshotStore, getDefaultStore, } from "./snapshot";
 export { validatePolicyFile, testPolicyAgainstAction, } from "./policy-helpers";
