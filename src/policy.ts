@@ -3,7 +3,7 @@
  * 
  * These models allow you to build and test policies in code without needing
  * to write YAML files. The server-side DSL, evaluators, and policy packs
- * remain in Horizon/Nexus.
+ * remain server-side.
  */
 
 export type RiskLevel = "low" | "medium" | "high";

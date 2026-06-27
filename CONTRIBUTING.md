@@ -133,9 +133,16 @@ python3 -m faramesh.cli serve
 
 ```bash
 git add .
-git commit -m "feat: add new feature"
+git commit -s -m "feat: add new feature"
 # or
-git commit -m "fix: fix bug in policy evaluation"
+git commit -s -m "fix: fix bug in policy evaluation"
+```
+
+Faramesh uses the Developer Certificate of Origin (DCO). Every commit must
+include a sign-off line:
+
+```text
+Signed-off-by: Your Name <you@example.com>
 ```
 
 **Commit Message Format:**
@@ -153,6 +160,13 @@ git push origin feature/your-feature-name
 ```
 
 Then create a pull request on GitHub.
+
+### AI-Assisted Contributions
+
+AI-assisted contributions are allowed when the contributor understands the
+change, tests it, and takes responsibility for it. Fully automated, low-signal,
+or undisclosed bulk AI-generated pull requests may be closed. Significant AI
+assistance should be disclosed in the pull request body.
 
 ---
 
